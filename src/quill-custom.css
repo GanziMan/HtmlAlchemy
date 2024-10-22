@@ -1,0 +1,38 @@
+/*본인이 설정하고 싶은 폰트 import하기*/
+@import url("https://webfontworld.github.io/amore/AritaBuri.css");
+
+@font-face {
+  font-family: "GangwonEduHyeonokT_OTFMediumA";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2201-2@1.0/GangwonEduHyeonokT_OTFMediumA.woff")
+    format("woff");
+}
+/*폰트 설정예시*/
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="buri"]::before,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="buri"]::before {
+  content: "Buri";
+  font-family: "AritaBuri";
+}
+.ql-font-buri {
+  font-family: "AritaBuri";
+}
+/*폰트 크기예시*/
+.ql-size-huge,
+.ql-size span[data-value="huge"]::before {
+  font-size: 20px !important;
+}
+.ql-size-medium,
+.ql-size span[data-value="medium"]::before {
+  font-size: 14px !important;
+}
+
+.ql-align-center {
+  text-align: center;
+}
+
+.ql-align-right {
+  text-align: right;
+}
+
+.ql-align-left {
+  text-align: left;
+}
