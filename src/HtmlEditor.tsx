@@ -1,4 +1,3 @@
-// src/MyEditor.tsx
 import React, { useMemo, useState } from "react";
 import ReactQuill, { Quill } from "react-quill";
 import "react-quill/dist/quill.snow.css"; // CSS 임포트
