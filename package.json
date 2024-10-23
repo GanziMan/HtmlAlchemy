@@ -10,13 +10,17 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@tinymce/tinymce-react": "^5.1.1",
     "@types/dompurify": "^3.0.5",
     "@xeger/quill-image-actions": "^0.7.2",
     "@xeger/quill-image-formats": "^0.7.2",
     "dompurify": "^3.1.7",
+    "fs-extra": "^11.2.0",
+    "my-react-app": "file:",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-quill": "^2.0.0"
+    "react-quill": "^2.0.0",
+    "tinymce": "^7.4.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.11.1",
