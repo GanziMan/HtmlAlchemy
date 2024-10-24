@@ -3,25 +3,85 @@ import { Editor } from "@tinymce/tinymce-react";
 import { Editor as TinyMCEEditor } from "tinymce";
 import "./App.css";
 import DOMPurify from "dompurify";
-
+import mammoth from "mammoth";
 import { convertToKoreanList } from "./handler/convertToKoreanList";
 import { PLUGINS, TOOL_BAR } from "./config";
-import { handleFileUpload } from "./handler/handleFileUpload";
-import { handleDownload } from "./handler/handleDownload";
 
 export default function App() {
   const editorRef = useRef<TinyMCEEditor | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+
   const [content, setContent] = useState<string>("");
-  const dompurify = DOMPurify.sanitize(content);
 
   const handleEditorChange = (content: string) => {
     setContent(content);
   };
 
+  const dompurify = DOMPurify.sanitize(content);
+
+  const handleFileUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+
+    if (file) {
+      if (file.name.endsWith(".docx")) {
+        const reader = new FileReader();
+
+        reader.onload = async (e) => {
+          const arrayBuffer = e.target?.result as ArrayBuffer;
+          if (arrayBuffer) {
+            try {
+              // mammoth 라이브러리를 사용해 .docx를 HTML로 변환
+              const result = await mammoth.convertToHtml({ arrayBuffer });
+              const htmlContent = result.value; // 변환된 HTML 내용
+
+              // 에디터에 변환된 HTML 내용 반영
+              if (editorRef.current) {
+                editorRef.current.setContent(htmlContent);
+              }
+            } catch (error) {
+              console.error("Error converting .docx file:", error);
+            }
+          }
+        };
+
+        reader.readAsArrayBuffer(file); // .docx 파일을 ArrayBuffer로 읽기
+      } else if (file.name.endsWith(".html")) {
+        const reader = new FileReader();
+
+        reader.onload = async (e) => {
+          const htmlContent = e.target?.result as string;
+
+          if (editorRef.current) {
+            editorRef.current.setContent(htmlContent);
+          }
+        };
+        reader.readAsText(file!); // .docx 파일을 ArrayBuffer로 읽기
+      } else {
+        alert(".docx, .html 파일만 업로드해주세요.");
+      }
+    }
+  };
+
   const fileUploadMenu = () => {
     if (fileInputRef.current) {
       fileInputRef.current.click();
+    }
+  };
+
+  const handleDownload = () => {
+    if (editorRef.current) {
+      const htmlContent = editorRef.current.getContent();
+      const blob = new Blob([htmlContent], { type: "text/html" });
+      const url = URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "example.html";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     }
   };
 
