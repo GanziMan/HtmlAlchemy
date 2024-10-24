@@ -167,7 +167,7 @@ export default function HtmlEditor() {
         dangerouslySetInnerHTML={{
           __html: dompurify,
         }}
-      ></div>
+      />
     </div>
   );
 }
