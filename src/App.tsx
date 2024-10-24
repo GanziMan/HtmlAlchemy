@@ -3,25 +3,50 @@ import { Editor } from "@tinymce/tinymce-react";
 import { Editor as TinyMCEEditor } from "tinymce";
 import "./App.css";
 import HtmlDownloadComponent from "./components/HtmlDownloadComponent";
+import DOMPurify from "dompurify";
 
 export default function App() {
   const editorRef = useRef<TinyMCEEditor | null>(null);
   const [content, setContent] = useState<string>("");
-  const log = () => {
-    if (editorRef.current) {
-      setContent(editorRef.current.getContent());
-    }
+
+  const handleEditorChange = (content: string) => {
+    setContent(content);
   };
+
+  const dompurify = DOMPurify.sanitize(content);
+
+  const handleDownload = ({ content }: { content: string }): void => {
+    const htmlString: string = `<div style="padding:1rem;">${content}</div>`; // 에디터에서 작성된 HTML 문자열
+
+    const blob = new Blob([htmlString], { type: "text/html" });
+
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "example.html";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
-    <>
-      <HtmlDownloadComponent content={content} />
+    <div
+      style={{
+        display: "flex",
+        height: "100%",
+        gap: "1px",
+      }}
+    >
       <Editor
+        onEditorChange={handleEditorChange}
         tinymceScriptSrc="/tinymce/tinymce.min.js"
         licenseKey="gpl"
         onInit={(_evt, editor) => (editorRef.current = editor)}
-        initialValue="<p>This is the initial content of the editor.</p>"
+        initialValue=""
         init={{
-          height: 500,
+          height: "100%",
+          width: "100%",
           menubar: false,
           plugins: [
             "advlist",
@@ -42,26 +67,37 @@ export default function App() {
             "help",
             "wordcount",
           ],
+
           toolbar:
-            "undo redo | blocks | " +
-            "bold italic forecolor | alignleft aligncenter " +
-            "alignright alignjustify | bullist numlist outdent indent | " +
-            "removeformat | help | table",
+            "undo redo | blocks | bold italic forecolor | " +
+            "alignleft aligncenter alignright alignjustify | " +
+            "bullist numlist outdent indent | removeformat | " +
+            "help | table | htmldownload",
+          setup: (editor) => {
+            // 커스텀 버튼 추가
+            editor.ui.registry.addButton("htmldownload", {
+              text: "Download HTML",
+              onAction: () => {
+                handleDownload({ content: dompurify });
+              },
+            });
+          },
           content_style:
             "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
         }}
       />
-      <button onClick={log}>Log editor content</button>
 
       <div
         style={{
           width: "100%",
-          border: "1px solid black",
+          border: "2px solid #eee",
+          borderRadius: "10px",
+          padding: "1rem",
         }}
         dangerouslySetInnerHTML={{
-          __html: content,
+          __html: dompurify,
         }}
       ></div>
-    </>
+    </div>
   );
 }
