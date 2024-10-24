@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import { Editor } from "@tinymce/tinymce-react";
 import { Editor as TinyMCEEditor } from "tinymce";
 import "./App.css";
+import HtmlDownloadComponent from "./components/HtmlDownloadComponent";
 
 export default function App() {
   const editorRef = useRef<TinyMCEEditor | null>(null);
@@ -13,8 +14,8 @@ export default function App() {
   };
   return (
     <>
+      <HtmlDownloadComponent content={content} />
       <Editor
-        onChange={(value) => console.log(value)}
         tinymceScriptSrc="/tinymce/tinymce.min.js"
         licenseKey="gpl"
         onInit={(_evt, editor) => (editorRef.current = editor)}
