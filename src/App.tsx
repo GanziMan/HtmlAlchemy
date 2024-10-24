@@ -7,6 +7,8 @@ import mammoth from "mammoth";
 
 export default function App() {
   const editorRef = useRef<TinyMCEEditor | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
   const [content, setContent] = useState<string>("");
 
   const handleEditorChange = (content: string) => {
@@ -20,30 +22,49 @@ export default function App() {
   ) => {
     const file = event.target.files?.[0];
 
-    if (file && file.name.endsWith(".docx")) {
-      const reader = new FileReader();
+    if (file) {
+      if (file.name.endsWith(".docx")) {
+        const reader = new FileReader();
 
-      reader.onload = async (e) => {
-        const arrayBuffer = e.target?.result as ArrayBuffer;
-        if (arrayBuffer) {
-          try {
-            // mammoth 라이브러리를 사용해 .docx를 HTML로 변환
-            const result = await mammoth.convertToHtml({ arrayBuffer });
-            const htmlContent = result.value; // 변환된 HTML 내용
+        reader.onload = async (e) => {
+          const arrayBuffer = e.target?.result as ArrayBuffer;
+          if (arrayBuffer) {
+            try {
+              // mammoth 라이브러리를 사용해 .docx를 HTML로 변환
+              const result = await mammoth.convertToHtml({ arrayBuffer });
+              const htmlContent = result.value; // 변환된 HTML 내용
 
-            // 에디터에 변환된 HTML 내용 반영
-            if (editorRef.current) {
-              editorRef.current.setContent(htmlContent);
+              // 에디터에 변환된 HTML 내용 반영
+              if (editorRef.current) {
+                editorRef.current.setContent(htmlContent);
+              }
+            } catch (error) {
+              console.error("Error converting .docx file:", error);
             }
-          } catch (error) {
-            console.error("Error converting .docx file:", error);
           }
-        }
-      };
+        };
 
-      reader.readAsArrayBuffer(file); // .docx 파일을 ArrayBuffer로 읽기
-    } else {
-      alert("Please upload a valid .docx file.");
+        reader.readAsArrayBuffer(file); // .docx 파일을 ArrayBuffer로 읽기
+      } else if (file.name.endsWith(".html")) {
+        const reader = new FileReader();
+
+        reader.onload = async (e) => {
+          const htmlContent = e.target?.result as string;
+
+          if (editorRef.current) {
+            editorRef.current.setContent(htmlContent);
+          }
+        };
+        reader.readAsText(file!); // .docx 파일을 ArrayBuffer로 읽기
+      } else {
+        alert(".docx, .html 파일만 업로드해주세요.");
+      }
+    }
+  };
+
+  const fileUploadMenu = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
     }
   };
 
@@ -70,7 +91,13 @@ export default function App() {
         gap: "1px",
       }}
     >
-      <input type="file" accept="*" onChange={handleFileUpload} />
+      <input
+        ref={fileInputRef}
+        style={{ display: "none" }}
+        type="file"
+        accept=".docx, .html"
+        onChange={handleFileUpload}
+      />
 
       <Editor
         onEditorChange={handleEditorChange}
@@ -119,7 +146,7 @@ export default function App() {
             "undo redo | blocks | bold italic forecolor | " +
             "alignleft aligncenter alignright alignjustify | " +
             "bullist numlist outdent indent | removeformat | " +
-            "help | table | htmldownload",
+            "help | table | htmldownload | fileupload",
           setup: (editor) => {
             editor.ui.registry.addButton("htmldownload", {
               text: "HTML 변환",
@@ -130,7 +157,7 @@ export default function App() {
             editor.ui.registry.addButton("fileupload", {
               text: "파일 업로드",
               onAction: () => {
-                // handleDownload({ content: dompurify });
+                fileUploadMenu(); // 파일 선택창 열기
               },
             });
           },
@@ -140,9 +167,11 @@ export default function App() {
       <div
         style={{
           width: "50%",
+          height: "100vh",
           border: "2px solid #eee",
           borderRadius: "10px",
           padding: "1rem",
+          overflow: "scroll",
         }}
         dangerouslySetInnerHTML={{
           __html: dompurify,
