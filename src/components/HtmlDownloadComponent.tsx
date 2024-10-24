@@ -2,7 +2,7 @@ interface HtmlStringProp {
   content: string;
 }
 const HtmlDownloadComponent = ({ content }: HtmlStringProp) => {
-  const htmlString: string = content; // 에디터에서 작성된 HTML 문자열
+  const htmlString: string = `<div style="padding:1rem;">${content}</div>`; // 에디터에서 작성된 HTML 문자열
 
   const handleDownload = (): void => {
     // Blob 생성 (파일 형식은 text/html로 지정)
