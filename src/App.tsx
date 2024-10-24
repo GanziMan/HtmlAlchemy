@@ -2,7 +2,6 @@ import { useRef, useState } from "react";
 import { Editor } from "@tinymce/tinymce-react";
 import { Editor as TinyMCEEditor } from "tinymce";
 import "./App.css";
-import HtmlDownloadComponent from "./components/HtmlDownloadComponent";
 import DOMPurify from "dompurify";
 
 export default function App() {
