@@ -17,6 +17,7 @@
     "@xeger/quill-image-formats": "^0.7.2",
     "dompurify": "^3.1.7",
     "fs-extra": "^11.2.0",
+    "mammoth": "^1.8.0",
     "my-react-app": "file:",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
