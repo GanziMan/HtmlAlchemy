@@ -5,30 +5,29 @@ import DOMPurify from "dompurify";
 import mammoth from "mammoth";
 import { PLUGINS, TOOL_BAR } from "./config";
 
+const tableStyle = `
+<style>
+  table, th, td {
+    border: 1px solid #e0e0e0;
+    border-collapse: collapse;
+  }
+  th, td {
+    padding: 8px;
+    text-align: left;
+  }
+</style>
+`;
+
 export default function HtmlEditor() {
   const editorRef = useRef<TinyMCEEditor | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const [content, setContent] = useState<string>("");
+  const dompurify = DOMPurify.sanitize(content + tableStyle);
 
   const handleEditorChange = (content: string) => {
     setContent(content);
   };
-
-  const tableStyle = `
-  <style>
-    table, th, td {
-      border: 1px solid #e0e0e0;
-      border-collapse: collapse;
-    }
-    th, td {
-      padding: 8px;
-      text-align: left;
-    }
-  </style>
-`;
-
-  const dompurify = DOMPurify.sanitize(content + tableStyle);
 
   const handleFileUpload = async (
     event: React.ChangeEvent<HTMLInputElement>
