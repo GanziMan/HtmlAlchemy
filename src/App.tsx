@@ -1,5 +1,5 @@
 import { lazy, Suspense } from "react";
-
+import "./App.css";
 const HtmlEditor = lazy(() => import("./HtmlEditor"));
 export default function App() {
   return (
