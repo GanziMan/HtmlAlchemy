@@ -5,12 +5,23 @@ import DOMPurify from "dompurify";
 import mammoth from "mammoth";
 import { PLUGINS, TOOL_BAR } from "./config";
 
+interface RegisterButtonType {
+  name: string;
+  text: string;
+  onAction: () => void;
+}
+
 const tableStyle = `
 <style>
   table, th, td {
     border: 1px solid #e0e0e0;
     border-collapse: collapse;
   }
+
+  table {
+    max-width:100%;
+  }
+
   th, td {
     padding: 8px;
     text-align: left;
@@ -95,6 +106,28 @@ export default function HtmlEditor() {
     }
   };
 
+  const REGISTER_BUTTON: RegisterButtonType[] = [
+    {
+      name: "htmldownload",
+      text: "HTML 변환",
+      onAction: handleDownload,
+    },
+    {
+      name: "fileupload",
+      text: "파일 업로드",
+      onAction: fileUploadMenu,
+    },
+    {
+      name: "hangullist",
+      text: "한글 리스트",
+      onAction: () => {
+        editorRef?.current?.execCommand("InsertOrderedList", false, {
+          "list-style-type": "hangul",
+        });
+      },
+    },
+  ];
+
   return (
     <div style={{ display: "flex", height: "100%", gap: "1px" }}>
       <input
@@ -117,21 +150,13 @@ export default function HtmlEditor() {
           menubar: false,
           plugins: PLUGINS,
           toolbar: TOOL_BAR,
+          block_formats: `본문=p; 제목 1=h1; 제목 2=h2;제목 3=h3;제목 4=h4;제목 5=h5;제목 6=h6;서식 있음=pre`,
           setup: (editor) => {
-            editor.ui.registry.addButton("htmldownload", {
-              text: "HTML 변환",
-              onAction: handleDownload,
-            });
-            editor.ui.registry.addButton("fileupload", {
-              text: "파일 업로드",
-              onAction: fileUploadMenu,
-            });
-            editor.ui.registry.addButton("customNumList", {
-              text: "한글 리스트",
-              onAction: () =>
-                editor.execCommand("InsertOrderedList", false, {
-                  "list-style-type": "hangul",
-                }),
+            REGISTER_BUTTON.forEach((button) => {
+              editor.ui.registry.addButton(button.name, {
+                text: button.text,
+                onAction: button.onAction,
+              });
             });
           },
         }}
