@@ -1,10 +1,8 @@
 import { useRef, useState } from "react";
 import { Editor } from "@tinymce/tinymce-react";
 import { Editor as TinyMCEEditor } from "tinymce";
-import "./App.css";
 import DOMPurify from "dompurify";
 import mammoth from "mammoth";
-import { convertToKoreanList } from "./handler/convertToKoreanList";
 import { PLUGINS, TOOL_BAR } from "./config";
 
 export default function HtmlEditor() {
@@ -17,7 +15,20 @@ export default function HtmlEditor() {
     setContent(content);
   };
 
-  const dompurify = DOMPurify.sanitize(content);
+  const tableStyle = `
+  <style>
+    table, th, td {
+      border: 1px solid #e0e0e0;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 8px;
+      text-align: left;
+    }
+  </style>
+`;
+
+  const dompurify = DOMPurify.sanitize(content + tableStyle);
 
   const handleFileUpload = async (
     event: React.ChangeEvent<HTMLInputElement>
@@ -32,11 +43,9 @@ export default function HtmlEditor() {
           const arrayBuffer = e.target?.result as ArrayBuffer;
           if (arrayBuffer) {
             try {
-              // mammoth 라이브러리를 사용해 .docx를 HTML로 변환
               const result = await mammoth.convertToHtml({ arrayBuffer });
-              const htmlContent = result.value; // 변환된 HTML 내용
+              const htmlContent = result.value;
 
-              // 에디터에 변환된 HTML 내용 반영
               if (editorRef.current) {
                 editorRef.current.setContent(htmlContent);
               }
@@ -46,7 +55,7 @@ export default function HtmlEditor() {
           }
         };
 
-        reader.readAsArrayBuffer(file); // .docx 파일을 ArrayBuffer로 읽기
+        reader.readAsArrayBuffer(file);
       } else if (file.name.endsWith(".html")) {
         const reader = new FileReader();
 
@@ -57,7 +66,7 @@ export default function HtmlEditor() {
             editorRef.current.setContent(htmlContent);
           }
         };
-        reader.readAsText(file!); // .docx 파일을 ArrayBuffer로 읽기
+        reader.readAsText(file);
       } else {
         alert(".docx, .html 파일만 업로드해주세요.");
       }
@@ -72,7 +81,9 @@ export default function HtmlEditor() {
 
   const handleDownload = () => {
     if (editorRef.current) {
-      const htmlContent = editorRef.current.getContent();
+      let htmlContent = editorRef.current.getContent();
+      htmlContent = tableStyle + htmlContent;
+
       const blob = new Blob([htmlContent], { type: "text/html" });
       const url = URL.createObjectURL(blob);
 
@@ -86,13 +97,7 @@ export default function HtmlEditor() {
   };
 
   return (
-    <div
-      style={{
-        display: "flex",
-        height: "100%",
-        gap: "1px",
-      }}
-    >
+    <div style={{ display: "flex", height: "100%", gap: "1px" }}>
       <input
         ref={fileInputRef}
         style={{ display: "none" }}
@@ -112,44 +117,22 @@ export default function HtmlEditor() {
           width: "50%",
           menubar: false,
           plugins: PLUGINS,
-
-          style_formats: [
-            {
-              title: "Korean Alphabet List",
-              selector: "ol",
-              styles: {
-                classes: "korean-list", // 커스텀 클래스 적용
-              },
-            },
-          ],
-          content_style: `
-          body { font-family:Helvetica,Arial,sans-serif; font-size:14px }
-          ol.korean-list { list-style-type: korean-hangul; }
-        `,
-
           toolbar: TOOL_BAR,
-
           setup: (editor) => {
-            editor.ui.registry.addButton("koreanList", {
-              text: "한글 리스트",
-              onAction: () => {
-                const content = editor.getContent();
-                const modifiedContent = convertToKoreanList(content);
-                editor.setContent(modifiedContent);
-              },
-            });
-
             editor.ui.registry.addButton("htmldownload", {
               text: "HTML 변환",
-              onAction: () => {
-                handleDownload();
-              },
+              onAction: handleDownload,
             });
             editor.ui.registry.addButton("fileupload", {
               text: "파일 업로드",
-              onAction: () => {
-                fileUploadMenu(); // 파일 선택창 열기
-              },
+              onAction: fileUploadMenu,
+            });
+            editor.ui.registry.addButton("customNumList", {
+              text: "한글 리스트",
+              onAction: () =>
+                editor.execCommand("InsertOrderedList", false, {
+                  "list-style-type": "hangul",
+                }),
             });
           },
         }}
@@ -158,7 +141,6 @@ export default function HtmlEditor() {
       <div
         style={{
           width: "50%",
-
           border: "2px solid #eee",
           borderRadius: "10px",
           padding: "1rem",
