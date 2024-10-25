@@ -23,5 +23,5 @@ export const TOOL_BAR = [
     "alignleft aligncenter alignright alignjustify | " +
     "bullist numlist outdent indent | removeformat | " +
     "help | table ",
-  "htmldownload | fileupload  | customNumList",
+  "htmldownload | fileupload  | hangullist",
 ];
