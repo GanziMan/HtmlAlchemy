@@ -164,6 +164,18 @@ export default function HtmlEditor() {
                 onAction: button.onAction,
               });
             });
+            editor.on("keydown", function (event) {
+              // Tab 키를 눌렀을 때 indent 실행
+              if (event.key === "Tab" && !event.shiftKey) {
+                event.preventDefault();
+                editor.execCommand("Indent");
+              }
+              // Shift + Tab 키를 눌렀을 때 outdent 실행
+              else if (event.key === "Tab" && event.shiftKey) {
+                event.preventDefault();
+                editor.execCommand("Outdent");
+              }
+            });
           },
         }}
       />
