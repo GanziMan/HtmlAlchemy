@@ -4,6 +4,7 @@ import { Editor as TinyMCEEditor } from "tinymce";
 import DOMPurify from "dompurify";
 import mammoth from "mammoth";
 import { PLUGINS, TOOL_BAR } from "./config";
+// import "tinymce-i18n/langs6/ko_KR";
 
 interface RegisterButtonType {
   name: string;
@@ -146,6 +147,9 @@ export default function HtmlEditor() {
         initialValue=""
         init={{
           language: "ko_KR",
+          language_url:
+            "https://cdn.jsdelivr.net/npm/tinymce-i18n/langs/ko_KR.js", // CDN 경로
+
           height: "100%",
           width: "50%",
           menubar: false,
