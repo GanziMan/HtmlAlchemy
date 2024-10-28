@@ -156,7 +156,7 @@ export default function HtmlEditor() {
           plugins: PLUGINS,
           toolbar: TOOL_BAR,
           content_style: "table { max-width: 100%; }",
-          block_formats: `본문=p; 제목 1=h1; 제목 2=h2;제목 3=h3;제목 4=h4;제목 5=h5;제목 6=h6;서식 있음=pre`,
+          // block_formats: `본문=p; 제목 1=h1; 제목 2=h2;제목 3=h3;제목 4=h4;제목 5=h5;제목 6=h6;서식 있음=pre`,
           setup: (editor) => {
             REGISTER_BUTTON.forEach((button) => {
               editor.ui.registry.addButton(button.name, {
