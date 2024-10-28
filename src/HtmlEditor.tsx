@@ -145,6 +145,7 @@ export default function HtmlEditor() {
         onInit={(_evt, editor) => (editorRef.current = editor)}
         initialValue=""
         init={{
+          language: "ko_KR",
           height: "100%",
           width: "50%",
           menubar: false,
