@@ -4,7 +4,6 @@ import { Editor as TinyMCEEditor } from "tinymce";
 import DOMPurify from "dompurify";
 import mammoth from "mammoth";
 import { PLUGINS, TOOL_BAR } from "./config";
-// import "tinymce-i18n/langs6/ko_KR";
 
 interface RegisterButtonType {
   name: string;
