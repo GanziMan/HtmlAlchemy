@@ -1,8 +1,6 @@
-- HTML Editor입니다. <br/>
+- TinyMce 라이브러리를 사용한 HTML Editor입니다. <br/>
 
 # 🌐 Links
-
-> **Service** : https://html-alchemy.vercel.app/ <br>
 
 # ⚙️ How to Start
 
