@@ -1,7 +1,5 @@
 - TinyMce 라이브러리를 사용한 HTML Editor입니다. <br/>
 
-# 🌐 Links
-
 # ⚙️ How to Start
 
 ## 0️⃣ Prerequisites
